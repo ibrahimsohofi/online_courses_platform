@@ -79,7 +79,22 @@ export default function CourseDetailPage({ params }: CoursePageProps) {
                 </p>
               )}
             </div>
-            <Button size="lg" className="w-full md:w-auto">Enroll Now</Button>
+            <div className="flex flex-col sm:flex-row gap-3">
+              <Button
+                size="lg"
+                className="w-full md:w-auto"
+                asChild
+              >
+                <Link href={`/checkout/${course.id}`}>Enroll Now</Link>
+              </Button>
+              <Button
+                variant="outline"
+                size="lg"
+                className="w-full md:w-auto"
+              >
+                Try Free Preview
+              </Button>
+            </div>
           </div>
           <div className="relative h-64 md:h-96 w-full rounded-lg overflow-hidden shadow-lg">
             <Image
@@ -161,7 +176,9 @@ export default function CourseDetailPage({ params }: CoursePageProps) {
                   </ul>
                 </div>
 
-                <Button className="w-full">Enroll Now</Button>
+                <Button className="w-full" asChild>
+                  <Link href={`/checkout/${course.id}`}>Enroll Now</Link>
+                </Button>
 
                 <div className="text-center text-sm text-muted-foreground">
                   <p>30-day money-back guarantee</p>
@@ -212,6 +229,54 @@ export default function CourseDetailPage({ params }: CoursePageProps) {
                     <p>No lessons available for this course yet.</p>
                   </div>
                 )}
+              </div>
+
+              <div>
+                <div className="bg-muted p-6 rounded-lg sticky top-8">
+                  <h3 className="text-lg font-bold mb-4">Get this course</h3>
+                  <div className="mb-4">
+                    <p className="text-2xl font-bold mb-1">
+                      ${course.discountPrice?.toFixed(2) || course.price.toFixed(2)}
+                    </p>
+                    {course.discountPrice && (
+                      <div className="flex items-center gap-2">
+                        <p className="text-muted-foreground line-through">
+                          ${course.price.toFixed(2)}
+                        </p>
+                        <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded">
+                          {Math.round(((course.price - course.discountPrice) / course.price) * 100)}% off
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                  <Button className="w-full mb-3" asChild>
+                    <Link href={`/checkout/${course.id}`}>Buy Now</Link>
+                  </Button>
+                  <p className="text-center text-sm text-muted-foreground mb-4">
+                    30-day money-back guarantee
+                  </p>
+                  <div className="border-t pt-4">
+                    <h4 className="font-medium mb-2">This course includes:</h4>
+                    <ul className="space-y-2 text-sm">
+                      <li className="flex items-center gap-2">
+                        <BookOpen className="h-4 w-4 text-muted-foreground" />
+                        <span>{course.lessons} lessons</span>
+                      </li>
+                      <li className="flex items-center gap-2">
+                        <Clock className="h-4 w-4 text-muted-foreground" />
+                        <span>{course.duration} of content</span>
+                      </li>
+                      <li className="flex items-center gap-2">
+                        <Users className="h-4 w-4 text-muted-foreground" />
+                        <span>Access on all devices</span>
+                      </li>
+                      <li className="flex items-center gap-2">
+                        <Star className="h-4 w-4 text-muted-foreground" />
+                        <span>Certificate of completion</span>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
               </div>
             </div>
           </TabsContent>
