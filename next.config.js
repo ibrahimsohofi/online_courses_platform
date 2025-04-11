@@ -1,30 +1,19 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Configure for static export
-  output: 'export',
-  distDir: 'out',
-
-  // Skip TypeScript type checking during build
-  typescript: {
-    ignoreBuildErrors: true,
-  },
-  // Skip ESLint during build
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
-  // Enable image optimization for remote images
   images: {
+    unoptimized: true, // Set to true to prevent hydration issues
     remotePatterns: [
       {
         protocol: 'https',
         hostname: 'images.unsplash.com',
+        pathname: '**',
       },
       {
         protocol: 'https',
         hostname: 'randomuser.me',
+        pathname: '**',
       },
     ],
-    unoptimized: true,
   },
 };
 

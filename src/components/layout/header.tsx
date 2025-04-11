@@ -19,6 +19,7 @@ import {
   SheetTrigger,
   SheetClose
 } from "@/components/ui/sheet";
+import { useCart } from "@/lib/cart-provider"
 
 type User = {
   name: string;
@@ -30,6 +31,7 @@ export function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [user, setUser] = useState<User | null>(null);
   const [mounted, setMounted] = useState(false);
+  const { totalItems } = useCart();
 
   // Handle scrolling - add shadow when scrolled
   useEffect(() => {
@@ -161,6 +163,14 @@ export function Header() {
                       Instructors
                     </Link>
                   </SheetClose>
+                  <SheetClose asChild>
+                    <Link
+                      href="/cart"
+                      className="text-sm font-medium py-2 hover:text-primary"
+                    >
+                      Cart ({totalItems})
+                    </Link>
+                  </SheetClose>
                   {user ? (
                     <>
                       <SheetClose asChild>
@@ -217,9 +227,11 @@ export function Header() {
           <Button variant="ghost" size="icon" className="relative" asChild>
             <Link href="/cart">
               <ShoppingCart className="h-5 w-5" />
-              <span className="absolute top-1 right-1 bg-primary text-primary-foreground text-xs w-4 h-4 rounded-full flex items-center justify-center">
-                0
-              </span>
+              {totalItems > 0 && (
+                <span className="absolute top-1 right-1 bg-primary text-primary-foreground text-xs w-4 h-4 rounded-full flex items-center justify-center">
+                  {totalItems}
+                </span>
+              )}
               <span className="sr-only">Cart</span>
             </Link>
           </Button>

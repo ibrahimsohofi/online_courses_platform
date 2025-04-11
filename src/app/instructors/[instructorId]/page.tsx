@@ -1,6 +1,9 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { useParams, notFound } from "next/navigation";
 import {
   User,
   Mail,
@@ -14,31 +17,41 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CourseCard } from "@/components/courses/course-card";
-import { instructors, getCoursesByInstructor } from "@/lib/data";
+import { instructors, getCoursesByInstructor, Instructor, Course } from "@/lib/data";
 
-interface InstructorPageProps {
-  params: {
-    instructorId: string;
-  };
-}
+export default function InstructorPage() {
+  const params = useParams();
+  const instructorId = params.instructorId as string;
+  const [instructor, setInstructor] = useState<Instructor | null>(null);
+  const [instructorCourses, setInstructorCourses] = useState<Course[]>([]);
+  const [loading, setLoading] = useState(true);
 
-// Generate all possible paths for static generation
-export function generateStaticParams() {
-  return instructors.map((instructor) => ({
-    instructorId: instructor.id,
-  }));
-}
+  useEffect(() => {
+    // Find instructor by ID
+    const foundInstructor = instructors.find(inst => inst.id === instructorId);
+    if (foundInstructor) {
+      setInstructor(foundInstructor);
+      // Get instructor's courses
+      const courses = getCoursesByInstructor(instructorId);
+      setInstructorCourses(courses);
+    }
+    setLoading(false);
+  }, [instructorId]);
 
-export default function InstructorPage({ params }: InstructorPageProps) {
-  // Find instructor by ID
-  const instructor = instructors.find(inst => inst.id === params.instructorId);
+  if (loading) {
+    return (
+      <div className="flex min-h-screen flex-col justify-center px-6 py-12">
+        <div className="mx-auto w-full max-w-md text-center">
+          <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full mx-auto mb-4"></div>
+          <p>Loading instructor profile...</p>
+        </div>
+      </div>
+    );
+  }
 
   if (!instructor) {
     return notFound();
   }
-
-  // Get instructor's courses
-  const instructorCourses = getCoursesByInstructor(params.instructorId);
 
   return (
     <div className="min-h-screen">

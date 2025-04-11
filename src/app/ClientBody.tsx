@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
+import { CartProvider } from "@/lib/cart-provider";
 
 export default function ClientBody({
   children,
@@ -17,9 +18,11 @@ export default function ClientBody({
 
   return (
     <body className="antialiased min-h-screen flex flex-col" suppressHydrationWarning>
-      <Header />
-      <main className="flex-1">{children}</main>
-      <Footer />
+      <CartProvider>
+        <Header />
+        <main className="flex-1">{children}</main>
+        <Footer />
+      </CartProvider>
     </body>
   );
 }

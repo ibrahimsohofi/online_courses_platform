@@ -3,6 +3,7 @@ import Image from "next/image";
 import { Star, Clock, BookOpen, Award } from "lucide-react";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import type { Course } from "@/lib/data";
+import { CourseCardActions } from "./course-card-actions";
 
 export interface CourseCardProps {
   course: Course;
@@ -51,6 +52,7 @@ export function CourseCard({ course, className }: CourseCardProps) {
           <div className="mt-3 flex items-center gap-2">
             <span className="text-sm">By {course.instructor}</span>
           </div>
+          <CourseCardActions course={course} courseId={course.id} />
         </CardContent>
         <CardFooter className="flex items-center justify-between border-t p-4">
           <div className="flex items-center gap-2">

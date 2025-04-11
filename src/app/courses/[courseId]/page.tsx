@@ -1,33 +1,50 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { useParams, notFound } from "next/navigation";
 import { Star, Clock, BookOpen, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   getCourseById,
   getLessonsByCourseId,
-  courses
+  Course,
+  Lesson
 } from "@/lib/data";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import CourseActionButtons from "./course-action-buttons";
 
-type CoursePageProps = {
-  params: {
-    courseId: string;
-  };
-};
+export default function CourseDetailPage() {
+  const params = useParams();
+  const courseId = params.courseId as string;
+  const [course, setCourse] = useState<Course | null>(null);
+  const [lessons, setLessons] = useState<Lesson[]>([]);
+  const [loading, setLoading] = useState(true);
 
-// Generate all possible paths for static generation
-export function generateStaticParams() {
-  return courses.map((course) => ({
-    courseId: course.id,
-  }));
-}
+  useEffect(() => {
+    const foundCourse = getCourseById(courseId);
+    if (foundCourse) {
+      setCourse(foundCourse);
+      const courseLessons = getLessonsByCourseId(courseId);
+      setLessons(courseLessons);
+    }
+    setLoading(false);
+  }, [courseId]);
 
-export default function CourseDetailPage({ params }: CoursePageProps) {
-  const course = getCourseById(params.courseId);
+  if (loading) {
+    return (
+      <div className="flex min-h-screen flex-col justify-center px-6 py-12">
+        <div className="mx-auto w-full max-w-md text-center">
+          <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full mx-auto mb-4"></div>
+          <p>Loading course...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // If course doesn't exist, show 404
   if (!course) return notFound();
-
-  const lessons = getLessonsByCourseId(params.courseId);
 
   return (
     <div className="min-h-screen">
@@ -79,22 +96,7 @@ export default function CourseDetailPage({ params }: CoursePageProps) {
                 </p>
               )}
             </div>
-            <div className="flex flex-col sm:flex-row gap-3">
-              <Button
-                size="lg"
-                className="w-full md:w-auto"
-                asChild
-              >
-                <Link href={`/checkout/${course.id}`}>Enroll Now</Link>
-              </Button>
-              <Button
-                variant="outline"
-                size="lg"
-                className="w-full md:w-auto"
-              >
-                Try Free Preview
-              </Button>
-            </div>
+            <CourseActionButtons course={course} courseId={courseId} />
           </div>
           <div className="relative h-64 md:h-96 w-full rounded-lg overflow-hidden shadow-lg">
             <Image
@@ -176,9 +178,7 @@ export default function CourseDetailPage({ params }: CoursePageProps) {
                   </ul>
                 </div>
 
-                <Button className="w-full" asChild>
-                  <Link href={`/checkout/${course.id}`}>Enroll Now</Link>
-                </Button>
+                <CourseActionButtons course={course} courseId={courseId} />
 
                 <div className="text-center text-sm text-muted-foreground">
                   <p>30-day money-back guarantee</p>
@@ -249,10 +249,8 @@ export default function CourseDetailPage({ params }: CoursePageProps) {
                       </div>
                     )}
                   </div>
-                  <Button className="w-full mb-3" asChild>
-                    <Link href={`/checkout/${course.id}`}>Buy Now</Link>
-                  </Button>
-                  <p className="text-center text-sm text-muted-foreground mb-4">
+                  <CourseActionButtons course={course} courseId={courseId} />
+                  <p className="text-center text-sm text-muted-foreground mb-4 mt-3">
                     30-day money-back guarantee
                   </p>
                   <div className="border-t pt-4">
